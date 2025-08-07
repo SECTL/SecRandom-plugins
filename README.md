@@ -8,9 +8,13 @@ SecRandom 支持插件系统，允许用户扩展应用功能。插件可以包�
 每个插件应该包含以下文件：
 
 ```
+具体应该根据示例插件的结构进行修改
 app/plugins/your_plugin_name/
 ├── plugin.json      # 插件配置文件
-└── page.py          # 插件页面文件（可选）
+├── assets/          # 插件资源文件夹
+│   └── icon.png     # 插件图标文件
+│── main.py          # 插件主文件
+│── page.py          # 插件页面文件（可选）
 ```
 
 ## 插件配置文件 (plugin.json)

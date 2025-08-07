@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "auto_start": true,
+  "debug_mode": false,
+  "max_items": 100,
+  "theme": "default",
+  "notifications": {
+    "enabled": true,
+    "sound": true,
+    "duration": 3000
+  },
+  "features": {
+    "feature1": true,
+    "feature2": false,
+    "feature3": true
+  }
+}

@@ -1,0 +1,4 @@
+# 示例插件依赖文件
+# 每行一个依赖包，支持版本号规范
+# 格式：package_name==version 或 package_name>=version
+

@@ -1,0 +1,10 @@
+{
+  "name": "示例插件",
+  "version": "1.0.0",
+  "description": "这是一个简单的示例插件，展示插件系统的基本功能",
+  "author": "SecRandom",
+  "entry_point": "main.py",
+  "min_app_version": "1.0.0",
+  "dependencies": [],
+  "enabled": true
+}

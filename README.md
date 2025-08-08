@@ -1,210 +1,203 @@
 # SecRandom 插件系统
 
 ## 概述
-SecRandom 支持插件系统，允许用户扩展应用功能。插件可以包含自定义界面和功能。
 
-## 插件结构
+SecRandom 插件系统为应用程序提供了灵活的扩展机制。通过插件系统，开发者可以轻松地添加新功能、扩展现有功能，并与主系统深度集成。
 
-每个插件应该包含以下文件：
+## 插件目录结构
 
 ```
-具体应该根据示例插件的结构进行修改
-app/plugins/your_plugin_name/
-├── plugin.json      # 插件配置文件
-├── assets/          # 插件资源文件夹
-│   └── icon.png     # 插件图标文件
-│── main.py          # 插件主文件
-│── page.py          # 插件页面文件（可选）
+app/plugin/
+├── example_plugin/          # 示例插件
+│   ├── plugin.json         # 插件配置文件
+│   ├── main.py            # 插件主程序
+│   └── README.md          # 插件说明文档
+└── [其他插件]/            # 其他插件目录
+    ├── plugin.json
+    ├── main.py
+    └── README.md
 ```
 
-## 插件配置文件 (plugin.json)
+## 插件开发要点
+
+### 1. 必需文件
+
+每个插件必须包含以下文件：
+
+- **plugin.json**: 插件配置文件，定义插件的基本信息
+- **main.py**: 插件主程序，包含插件的核心功能
+- **README.md**: 插件说明文档，提供使用指南
+
+### 2. 插件配置文件 (plugin.json)
 
 ```json
 {
   "name": "插件名称",
   "version": "1.0.0",
-  "author": "作者名称",
-  "description": "插件描述",
-  "icon": "plugins/插件名称/assets/icon.png"
+  "description": "插件功能描述",
+  "author": "插件作者",
+  "entry_point": "main.py",
+  "min_app_version": "1.0.0",
+  "dependencies": [],
+  "enabled": true
 }
 ```
 
-### 配置字段说明
-
-- `name`: 插件显示名称
-- `version`: 插件版本号
-- `author`: 插件作者
-- `description`: 插件描述
-- `icon`: 插件图标(使用相对路径-插件文件夹根目录下的assets文件夹,名称要为'icon.png', 'icon.ico', 'icon.svg'其中之一)
-
-## 插件页面文件 (page.py)
-
-如果插件需要显示界面，需要创建 `page.py` 文件并包含 `PluginPage` 类：
+### 3. 插件主程序结构
 
 ```python
+# 导入必要的库
+import json
+import os
+from typing import Dict, List, Optional
+from qfluentwidgets import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from qfluentwidgets import *
+from PyQt5.QtGui import *
+from loguru import logger
 
+# 插件类
+class MyPlugin:
+    def __init__(self):
+        self.config_path = "app/plugin/my_plugin/config.json"
+        self.config = {}
+        self.load_config()
+        
+    def load_config(self):
+        """加载配置"""
+        try:
+            if os.path.exists(self.config_path):
+                with open(self.config_path, 'r', encoding='utf-8') as f:
+                    self.config = json.load(f)
+        except Exception as e:
+            logger.error(f"加载配置失败: {e}")
+            
+    def get_info(self) -> Dict:
+        """获取插件信息"""
+        return {
+            "name": "我的插件",
+            "version": "1.0.0",
+            "description": "插件描述"
+        }
+        
+    def execute(self, *args, **kwargs):
+        """执行插件功能"""
+        return "插件执行成功"
 
-class PluginPage(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("插件页面")
-        self.setup_ui()
+# API 函数
+def show_dialog(parent=None):
+    """显示插件界面"""
+    dialog = __MyPluginDialog(parent) # 例子
+    dialog.exec_()
     
-    def setup_ui(self):
-        # 在这里设置你的界面
-        layout = QVBoxLayout(self)
-        
-        title_label = TitleLabel("我的插件")
-        layout.addWidget(title_label)
-        
-        # 添加更多界面元素...
+def get_plugin_info() -> Dict:
+    """获取插件信息"""
+    plugin = MyPlugin()
+    return plugin.get_info()
 ```
 
-## 插件管理
+## 插件系统特性
 
-### 1. 通过设置界面管理
+### 核心优势
 
-1. 打开主应用
-2. 点击设置按钮
-3. 选择"插件管理"选项卡
-4. 在插件管理界面中，你可以：
-   - 查看已安装的插件
-   - 导入新的插件包（.zip 文件）
-   - 删除现有插件
-   - 打开插件页面（如果插件有页面文件）
+1. **模块化设计**: 每个插件都是独立的模块，便于开发和维护
+2. **易于集成**: 提供标准的API接口，与主系统无缝集成
+3. **配置灵活**: 支持动态配置，用户可以自定义插件行为
+4. **界面统一**: 使用 qfluentwidgets 保持界面风格一致
+5. **错误处理**: 完善的异常处理和日志记录机制
 
-### 2. 通过托盘菜单快速访问
+### 技术特点
 
-右键点击系统托盘图标，选择"打开插件管理"可以直接进入插件管理界面。
+- **基于 PyQt5**: 使用成熟的桌面应用框架
+- **配置管理**: JSON 格式的配置文件，易于编辑和备份
+- **日志系统**: 集成 loguru 日志库，便于调试和监控
+- **信号槽机制**: 支持事件驱动的编程模式
+- **类型提示**: 使用 Python 类型提示，提高代码质量
 
-### 3. 导入插件
+## 开发指南
 
-1. 点击"导入"按钮
-2. 选择插件包文件（.zip 格式）
-3. 插件包必须包含 `plugin.json` 配置文件
-4. 系统会自动解压并加载插件
+### 1. 环境要求
 
-### 4. 删除插件
+- Python 3.8.10+
+- PyQt5
+- qfluentwidgets
+- loguru
 
-1. 在插件卡片中点击"删除"按钮
-2. 确认删除操作
-3. 插件将被完全移除
+### 2. 开发步骤
 
-## 插件包格式
+1. **创建插件目录**: 在 `app/plugin/` 下创建插件目录
+2. **编写配置文件**: 创建 `plugin.json` 定义插件信息
+3. **实现主程序**: 编写 `main.py` 实现插件功能
+4. **添加界面**: 创建图形界面（如需要）
+5. **编写文档**: 创建 `README.md` 说明插件用法
+6. **测试调试**: 测试插件功能并调试问题
 
-插件包是一个 .zip 文件，包含以下结构：
+### 3. 最佳实践
 
-```
-plugin_name.zip
-├── plugin.json
-├── page.py (可选)
-└── 其他资源文件 (可选)
-```
+- **命名规范**: 使用清晰的命名约定
+- **错误处理**: 添加适当的异常处理
+- **日志记录**: 记录重要的操作和错误
+- **配置管理**: 合理使用配置文件
+- **界面设计**: 遵循主系统的界面风格
 
-## 示例插件
+### 4. 调试技巧
 
-系统提供了一个示例插件 `example_plugin`，你可以参考它的结构来创建自己的插件。
-
-## 注意事项
-
-1. 插件目录位于 `app/plugins/`
-2. 插件名称必须唯一，不能重复
-3. 插件页面类必须命名为 `PluginPage`
-4. 插件可以使用 qfluentwidgets 的所有组件
-5. 插件页面会在独立的窗口中打开
-
-## 常用 Fluent Icon
-
-- 可以看app\resource\assets路径下的图标
-- 如需增加需要自行添加到assets路径下(需要按照格式添加暗色和亮色图标)
-- 或者您可以自己在插件路径下添加图标文件(需要自己在插件中自行写图标的相对路径)
-
-## 开发建议
-
-1. 保持插件简单和专注
-2. 提供清晰的描述和作者信息
-3. 测试插件在不同主题下的显示效果
-4. 遵循现有的 UI 风格和交互模式
-5. 添加适当的错误处理和日志记录
-
-
-
-
-# 插件依赖离线缓存目录
-
-此目录用于存放插件依赖的离线wheel文件，支持插件在没有网络连接的情况下安装依赖。
-
-## 使用方法
-
-### 1. 下载wheel文件
-```bash
-# 下载指定包的wheel文件
-pip download package_name==version -d resources/wheels/
-
-# 下载多个包的wheel文件
-pip download -r requirements.txt -d resources/wheels/
+```python
+# 在 main.py 末尾添加测试代码
+if __name__ == "__main__":
+    app = QApplication([])
+    # 测试插件功能
+    dialog = MyDialog()
+    dialog.show()
+    app.exec_()
 ```
 
-### 2. 支持的包类型
-- **ollama**: 用于大语言模型交互
-- **transformers**: 用于自然语言处理
-- **torch**: 深度学习框架
-- **numpy**: 数值计算
-- **pandas**: 数据处理
-- **requests**: HTTP请求
-- 其他常用Python包
+### 5. 软件没有对应库的情况
 
-### 3. 目录结构
-```
-resources/wheels/
-├── ollama-0.1.0-py3-none-any.whl
-├── transformers-4.20.0-py3-none-any.whl
-├── torch-1.12.0-cp39-cp39-win_amd64.whl
-├── numpy-1.21.0-cp39-cp39-win_amd64.whl
-└── ...
+在插件系统中，如果软件没有对应库的情况，需要在插件的 `plugin.json` 文件中添加 `dependencies` 字段，指定插件依赖的库。例如：
+
+```json
+{
+  "name": "插件名称",
+  "version": "1.0.0",
+  "description": "插件功能描述",
+  "author": "插件作者",
+  "entry_point": "main.py",
+  "min_app_version": "1.0.0",
+  "dependencies": ["transformers", "torch"],
+  "enabled": true
+}
 ```
 
-### 4. 插件依赖安装流程
-1. 插件加载时检查 `__requirements__.txt` 文件
-2. 在插件目录下创建 `site-packages` 目录
-3. 使用以下命令安装依赖：
-   ```bash
-   pip install --target <plugin_dir>/site-packages -r __requirements__.txt --find-links resources/wheels
-   ```
-4. 将 `site-packages` 目录添加到 `sys.path`
-5. 依赖安装成功后加载插件
+### 6. SecRandom 程序逻辑是怎么安装python库的？
 
-### 5. 注意事项
-- wheel文件应该与目标Python版本兼容
-- 建议定期更新wheel文件以获取最新版本
-- 某些包可能需要额外的系统依赖
-- 在Windows环境下，优先下载 `.whl` 文件而非源码包
+SecRandom 程序在启动时会检查插件目录下的 `plugin.json` 文件，根据 `dependencies` 字段安装插件依赖的库。如果库不存在，程序会自动从 PyPI 下载并安装。
 
-## 维护建议
+### 7. 插件的依赖库是怎么管理的？
 
-### 定期更新wheel文件
-```bash
-# 批量更新常用包
-pip download --upgrade ollama transformers torch numpy pandas requests -d resources/wheels/
-```
+插件的依赖库会被安装到 SecRandom 程序插件目录下的 `site-packages` 目录下。每个插件的依赖库都是独立的，不会与其它插件的库冲突。
 
-### 清理旧版本
-```bash
-# 删除指定包的旧版本
-find resources/wheels/ -name "package_name-*" -not -name "package_name-latest-version*" -delete
-```
+## 现有插件
 
-### 验证wheel文件完整性
-```bash
-# 检查wheel文件是否损坏
-for file in resources/wheels/*.whl; do
-    if unzip -t "$file" > /dev/null 2>&1; then
-        echo "✓ $file is valid"
-    else
-        echo "✗ $file is corrupted"
-    fi
-done
-```
+### 1. 示例插件 (example_plugin)
+- **功能**: 演示插件系统的基本功能
+- **位置**: `app/plugin/example_plugin/`
+- **用途**: 提供插件开发的示例
+
+## 常见问题
+
+### Q: 如何创建一个新的插件？
+A: 复制 `example_plugin` 目录，修改其中的文件来实现你的功能。
+
+### Q: 插件如何与主系统通信？
+A: 可以通过信号槽、事件系统或直接调用主系统API来实现通信。
+
+### Q: 如何处理插件的配置？
+A: 使用 JSON 格式的配置文件，在插件初始化时加载，修改时保存。
+
+### Q: 插件的界面如何保持一致？
+A: 使用 qfluentwidgets 库创建界面，遵循主系统的设计规范。
+
+---
+
+© 2025 SecRandom. All rights reserved.

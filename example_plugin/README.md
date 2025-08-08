@@ -264,4 +264,4 @@ if __name__ == "__main__":
 
 ---
 
-© 2024 SecRandom Team. All rights reserved.
+© 2025 SecRandom Team. All rights reserved.

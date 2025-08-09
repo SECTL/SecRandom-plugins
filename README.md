@@ -37,13 +37,15 @@ app/plugin/
   "description": "插件功能描述",
   "author": "插件作者",
   "entry_point": "main.py",
-  "min_app_version": "1.0.0",
+  "background_service": "service.py",
+  "min_app_version": "1.0.0.0",
   "dependencies": [],
-  "enabled": true
+  "enabled": true,
+  "autostart": false
 }
 ```
 
-### 3. 插件主程序结构
+### 3. 插件主程序 (main.py)
 
 ```python
 # 导入必要的库
@@ -96,6 +98,25 @@ def get_plugin_info() -> Dict:
     return plugin.get_info()
 ```
 
+### 4. 插件服务
+
+如果插件需要在后台运行服务，应在 `service.py` 文件中实现：
+
+```python
+class MyPluginService:
+    def __init__(self):
+        # 初始化服务
+        pass
+        
+    def start(self):
+        # 启动服务
+        pass
+        
+    def stop(self):
+        # 停止服务
+        pass
+```
+
 ## 插件系统特性
 
 ### 核心优势
@@ -128,9 +149,11 @@ def get_plugin_info() -> Dict:
 1. **创建插件目录**: 在 `app/plugin/` 下创建插件目录
 2. **编写配置文件**: 创建 `plugin.json` 定义插件信息
 3. **实现主程序**: 编写 `main.py` 实现插件功能
-4. **添加界面**: 创建图形界面（如需要）
-5. **编写文档**: 创建 `README.md` 说明插件用法
-6. **测试调试**: 测试插件功能并调试问题
+4. **实现服务**: 如果需要后台服务，编写 `service.py`
+5. **添加界面**: 创建图形界面（如需要）
+6. **编写文档**: 创建 `README.md` 说明插件用法
+7. **测试调试**: 测试插件功能并调试问题
+8. **打包发布**: 打包插件为 zip 文件，发布到插件广场
 
 ### 3. 最佳实践
 

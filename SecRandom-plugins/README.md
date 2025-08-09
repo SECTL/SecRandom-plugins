@@ -53,21 +53,25 @@ app/plugin/example_plugin/
   "description": "插件描述",
   "author": "作者",
   "entry_point": "入口文件",
+  "background_service": "后台服务文件",
   "min_app_version": "最低应用版本",
   "dependencies": [],
-  "enabled": true
+  "enabled": true,
+  "autostart": false
 }
 ```
 
 **配置项说明：**
 - `name`: 插件显示名称
-- `version`: 插件版本号（语义化版本）
+- `version`: 插件版本号（语义化版本）(格式：v1.0.0(就建议这种格式的)  或者是跟你的GitHub tag一致)
 - `description`: 插件功能描述
 - `author`: 插件作者
 - `entry_point`: 插件入口文件（通常是 main.py）
-- `min_app_version`: 兼容的最低应用版本
+- `background_service`: 插件后台服务文件（可选）
+- `min_app_version`: 兼容的最低应用版本(格式：v0.0.0.0(必须是这个!))
 - `dependencies`: 依赖列表（可选）
 - `enabled`: 是否默认启用
+- `autostart`: 是否自动启动(一般来说默认最好是false)
 
 ### 2. 插件主程序 (main.py)
 
@@ -168,9 +172,28 @@ except Exception as e:
     # 返回错误信息或显示错误提示
 ```
 
+### 6. 插件服务
+
+如果插件需要在后台运行服务，应在 `service.py` 文件中实现：
+
+```python
+class ExampleService:
+    def __init__(self):
+        # 初始化服务
+        pass
+        
+    def start(self):
+        # 启动服务
+        pass
+        
+    def stop(self):
+        # 停止服务
+        pass
+```
+
 ## 插件集成要点
 
-### 1. 与主系统通信
+### 1. 与主系统通信(暂时不支持)
 
 插件可以通过以下方式与主系统集成：
 

@@ -123,9 +123,7 @@ def execute_plugin(*args, **kwargs):
     pass
 ```
 
-### 3. 配置管理
-
-插件应该支持配置的保存和加载：
+### ⚙️ 配置管理
 
 ```python
 def load_config(self):
@@ -134,8 +132,13 @@ def load_config(self):
         if os.path.exists(self.config_path):
             with open(self.config_path, 'r', encoding='utf-8') as f:
                 self.config = json.load(f)
+                logger.info("配置加载成功")
+        else:
+            self.config = self._get_default_config()
+            self.save_config()
     except Exception as e:
         logger.error(f"加载配置失败: {e}")
+        self.config = self._get_default_config()
         
 def save_config(self):
     """保存插件配置"""
@@ -143,8 +146,18 @@ def save_config(self):
         os.makedirs(os.path.dirname(self.config_path), exist_ok=True)
         with open(self.config_path, 'w', encoding='utf-8') as f:
             json.dump(self.config, f, ensure_ascii=False, indent=4)
+        logger.info("配置保存成功")
     except Exception as e:
         logger.error(f"保存配置失败: {e}")
+        
+def _get_default_config(self):
+    """获取默认配置"""
+    return {
+        "theme": "auto",
+        "language": "zh_CN",
+        "auto_start": False,
+        "debug_mode": False
+    }
 ```
 
 ### 4. 日志记录

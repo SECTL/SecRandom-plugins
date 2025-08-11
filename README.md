@@ -11,6 +11,7 @@ app/plugin/
 ├── example_plugin/          # 示例插件
 │   ├── plugin.json         # 插件配置文件
 │   ├── main.py            # 插件主程序
+│   ├── icon.png           # 插件图标文件
 │   └── README.md          # 插件说明文档
 └── [其他插件]/            # 其他插件目录
     ├── plugin.json

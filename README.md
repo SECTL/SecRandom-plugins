@@ -57,6 +57,7 @@ SecRandom-plugins/
   "version": "v1.0.0",
   "description": "插件功能描述",
   "author": "插件作者",
+  "url": "https://github.com/username/plugin-repo",
   "entry_point": "main.py",
   "background_service": "service.py",
   "min_app_version": "v1.0.0.0",
@@ -71,6 +72,7 @@ SecRandom-plugins/
 - `version`：插件版本号（建议使用语义化版本，如 v1.0.0）
 - `description`：插件功能描述
 - `author`：插件作者
+- `url`：插件主页或仓库URL（必选！要做为对比插件的用处，提供GitHub仓库链接）
 - `entry_point`：插件入口文件（通常是 main.py）
 - `background_service`：插件后台服务文件（可选）
 - `min_app_version`：兼容的最低应用版本（格式：v1.0.0.0）
